@@ -1,138 +1,258 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <!-- [KEEP ALL YOUR EXISTING CSS] -->
-    <style>
-        /* [PASTE ALL YOUR ORIGINAL CSS HERE] */
-        
-        /* NEW: Error message style */
-        .error-message {
-            color: #ff4d4f;
-            background: #fff2f0;
-            padding: 0.75rem;
-            border-radius: 8px;
-            margin-top: 1rem;
-            display: none;
-            font-size: 0.9rem;
-            border: 1px solid #ffccc7;
-        }
-    </style>
-</head>
-<body>
-    <!-- [KEEP ALL YOUR EXISTING HTML] -->
-    <!-- ADD THIS AFTER LOADING DIV -->
-    <div class="error-message" id="error-message"></div>
 
-    <script>
-        // ====== IMPROVED VERSION ====== //
-        // DOM Elements
-        const errorMessage = document.getElementById('error-message');
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
+
+<header style="background:linear-gradient(135deg, #4a6bff, #3f51b5); color:white; padding:24px; border-radius:12px; margin-bottom:24px; box-shadow:0 4px 12px rgba(63, 81, 181, 0.15); text-align:center;">
+  <h1 style="margin:0; font-family:'Inter', sans-serif; font-weight:700; letter-spacing:-0.5px;">TELEKBOYO <span style="font-size:0.5em; border:1px solid rgba(255, 255, 255, 0.5); padding:2px 5px; vertical-align:middle; border-radius:4px; margin-left:4px;">lite</span></h1>
+  <p style="margin:5px 0 0; font-family:'Inter', sans-serif; opacity:0.9;">ai image generator</p>
+</header>
+
+<div id="generatorCtn" style="max-width:800px; margin:0 auto; padding:20px;">
+  <div style="position:relative; margin-bottom:20px;">
+    <input id="promptInput" type="text" placeholder="Enter your prompt here..." style="width:100%; padding:14px 16px; font-size:0.9em; box-sizing:border-box; border-radius:8px; border:1px solid #e0e0e0; box-shadow:0 2px 5px rgba(0,0,0,0.05); font-family:'Inter', sans-serif; transition:all 0.2s;">
+    <button id="clearBtn" style="position:absolute; right:10px; top:50%; transform:translateY(-50%); background:none; border:none; cursor:pointer; color:#999; font-size:16px; transition:color 0.2s;">✕</button>
+  </div>
+  
+  <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-bottom:24px;">
+    <div>
+      <label for="ratioSelect" style="display:block; margin-bottom:8px; font-weight:500; font-family:'Inter', sans-serif; color:#555;">Aspect Ratio:</label>
+      <select id="ratioSelect" style="width:100%; padding:10px; border-radius:8px; border:1px solid #e0e0e0; background-color:white; font-family:'Inter', sans-serif; box-shadow:0 2px 5px rgba(0,0,0,0.05); transition:all 0.2s;">
+        <option value="1:1">1:1 (Square)</option>
+        <option value="16:9">16:9 (Landscape)</option>
+        <option value="9:16">9:16 (Portrait)</option>
+        <option value="4:3">4:3 (Standard)</option>
+        <option value="3:2">3:2 (Classic)</option>
+      </select>
+    </div>
+    
+    <div>
+      <label for="styleSelect" style="display:block; margin-bottom:8px; font-weight:500; font-family:'Inter', sans-serif; color:#555;">Style:</label>
+      <select id="styleSelect" style="width:100%; padding:10px; border-radius:8px; border:1px solid #e0e0e0; background-color:white; font-family:'Inter', sans-serif; box-shadow:0 2px 5px rgba(0,0,0,0.05); transition:all 0.2s;">
+        <option value="none">None</option>
+        <option value="anime">Anime</option>
+        <option value="realistic">Realistic</option>
+        <option value="painting">Painting</option>
+        <option value="sketch">Sketch</option>
+        <option value="3d">3D Render</option>
+        <option value="cartoon">Cartoon</option>
+        <option value="abstract">Abstract</option>
+        <option value="watercolor">Watercolor</option>
+        <option value="pixel-art">Pixel Art</option>
+        <option value="cyberpunk">Cyberpunk</option>
+        <option value="vaporwave">Vaporwave</option>
+        <option value="oil-painting">Oil Painting</option>
+        <option value="minimalist">Minimalist</option>
+        <option value="surrealist">Surrealist</option>
+        <option value="fantasy">Fantasy</option>
+        <option value="steampunk">Steampunk</option>
+        <option value="pop-art">Pop Art</option>
+        <option value="digital-art">Digital Art</option>
+        <option value="vintage">Vintage</option>
+        <option value="comic">Comic Book</option>
+        <option value="sci-fi">Sci-Fi</option>
+      </select>
+    </div>
+    
+    <div>
+      <label for="paramSelect" style="display:block; margin-bottom:8px; font-weight:500; font-family:'Inter', sans-serif; color:#555;">Parameters:</label>
+      <select id="paramSelect" style="width:100%; padding:10px; border-radius:8px; border:1px solid #e0e0e0; background-color:white; font-family:'Inter', sans-serif; box-shadow:0 2px 5px rgba(0,0,0,0.05); transition:all 0.2s;">
+        <option value="random">Random Seed</option>
+        <option value="set">Set Seed</option>
+        <option value="negative">Negative Prompt</option>
+        <option value="steps">Steps</option>
+        <option value="cfg">CFG Scale</option>
+      </select>
+      <input id="seedInput" type="number" placeholder="Enter seed number" style="width:100%; margin-top:8px; padding:10px; border-radius:8px; border:1px solid #e0e0e0; font-family:'Inter', sans-serif; box-shadow:0 2px 5px rgba(0,0,0,0.05); display:none;">
+      <input id="negativeInput" type="text" placeholder="Enter negative prompt" style="width:100%; margin-top:8px; padding:10px; border-radius:8px; border:1px solid #e0e0e0; font-family:'Inter', sans-serif; box-shadow:0 2px 5px rgba(0,0,0,0.05); display:none;">
+      <input id="stepsInput" type="number" placeholder="Enter steps (10-150)" min="10" max="150" value="50" style="width:100%; margin-top:8px; padding:10px; border-radius:8px; border:1px solid #e0e0e0; font-family:'Inter', sans-serif; box-shadow:0 2px 5px rgba(0,0,0,0.05); display:none;">
+      <input id="cfgInput" type="number" placeholder="Enter CFG scale (1-20)" min="1" max="20" value="7" step="0.5" style="width:100%; margin-top:8px; padding:10px; border-radius:8px; border:1px solid #e0e0e0; font-family:'Inter', sans-serif; box-shadow:0 2px 5px rgba(0,0,0,0.05); display:none;">
+    </div>
+    
+    <div>
+      <label for="formatSelect" style="display:block; margin-bottom:8px; font-weight:500; font-family:'Inter', sans-serif; color:#555;">Image Format:</label>
+      <select id="formatSelect" style="width:100%; padding:10px; border-radius:8px; border:1px solid #e0e0e0; background-color:white; font-family:'Inter', sans-serif; box-shadow:0 2px 5px rgba(0,0,0,0.05); transition:all 0.2s;">
+        <option value="png">PNG</option>
+        <option value="jpg">JPG</option>
+        <option value="webp">WEBP</option>
+      </select>
+    </div>
+  </div>
+  
+  <button id="generateBtn" style="width:100%; padding:14px; background:linear-gradient(135deg, #4a6bff, #3f51b5); color:white; border:none; border-radius:8px; cursor:pointer; font-weight:600; font-family:'Inter', sans-serif; margin-bottom:24px; box-shadow:0 4px 8px rgba(63, 81, 181, 0.2); transition:all 0.2s;">Generate Image</button>
+  
+  <div id="resultCtn" style="display:none; text-align:center;">
+    <img id="resultImg" style="max-width:100%; border-radius:12px; margin-bottom:16px; box-shadow:0 8px 24px rgba(0,0,0,0.1);">
+    <button id="downloadBtn" style="padding:12px 24px; background:linear-gradient(135deg, #ff4081, #f50057); color:white; border:none; border-radius:8px; cursor:pointer; font-weight:600; font-family:'Inter', sans-serif; box-shadow:0 4px 8px rgba(255, 64, 129, 0.2); transition:all 0.2s;">Download Image</button>
+  </div>
+  
+  <div id="loadingCtn" style="display:none; text-align:center; margin:20px 0;">
+    <p style="font-family:'Inter', sans-serif; color:#555;">Generating your image...</p>
+    <div style="width:50px; height:50px; border:5px solid #f3f3f3; border-top:5px solid #3f51b5; border-radius:50%; margin:0 auto; animation:spin 1s linear infinite;"></div>
+  </div>
+</div>
+
+<footer style="background:linear-gradient(135deg, #4a6bff, #3f51b5); color:white; padding:16px; border-radius:12px; margin-top:24px; font-family:'Inter', sans-serif; text-align:center; opacity:0.9; box-shadow:0 4px 12px rgba(63, 81, 181, 0.15);">
+  <p style="margin:0;">powered by KenthirAi ©2025</p>
+</footer>
+
+<style>
+  body { 
+    text-align:left; 
+    font-family:'Inter', sans-serif; 
+    background-color:#f9f9f9;
+    color:#333;
+    padding:20px;
+  }
+  
+  input:focus, select:focus {
+    outline:none;
+    border-color:#3f51b5 !important;
+    box-shadow:0 0 0 3px rgba(63, 81, 181, 0.1) !important;
+  }
+  
+  button:hover {
+    opacity:0.9;
+    transform:translateY(-1px);
+    box-shadow:0 6px 12px rgba(63, 81, 181, 0.25);
+  }
+  
+  #downloadBtn:hover {
+    box-shadow:0 6px 12px rgba(255, 64, 129, 0.25);
+  }
+  
+  #clearBtn:hover {
+    color:#ff4081;
+  }
+  
+  @keyframes spin { 0% { transform:rotate(0deg); } 100% { transform:rotate(360deg); } }
+</style>
+
+<script>
+  // Clear prompt button functionality
+  clearBtn.onclick = () => {
+    promptInput.value = '';
+    promptInput.focus();
+  };
+  
+  // Show/hide parameter inputs based on selection
+  paramSelect.onchange = () => {
+    seedInput.style.display = 'none';
+    negativeInput.style.display = 'none';
+    stepsInput.style.display = 'none';
+    cfgInput.style.display = 'none';
+    
+    switch(paramSelect.value) {
+      case 'set':
+        seedInput.style.display = 'block';
+        break;
+      case 'negative':
+        negativeInput.style.display = 'block';
+        break;
+      case 'steps':
+        stepsInput.style.display = 'block';
+        break;
+      case 'cfg':
+        cfgInput.style.display = 'block';
+        break;
+    }
+  };
+  
+  // Generate image button
+  generateBtn.onclick = async () => {
+    if (!promptInput.value.trim()) {
+      alert('Please enter a prompt');
+      return;
+    }
+    
+    // Show loading indicator
+    resultCtn.style.display = 'none';
+    loadingCtn.style.display = 'block';
+    
+    // Get ratio dimensions
+    let width, height;
+    switch(ratioSelect.value) {
+      case '1:1': width = 512; height = 512; break;
+      case '16:9': width = 640; height = 360; break;
+      case '9:16': width = 360; height = 640; break;
+      case '4:3': width = 640; height = 480; break;
+      case '3:2': width = 600; height = 400; break;
+      default: width = 512; height = 512;
+    }
+    
+    // Build prompt with style
+    let fullPrompt = promptInput.value;
+    if (styleSelect.value !== 'none') {
+      fullPrompt += `, ${styleSelect.value.replace('-', ' ')} style`;
+    }
+    
+    // Add parameters
+    let seed = '';
+    if (paramSelect.value === 'set' && seedInput.value) {
+      seed = `&seed=${seedInput.value}`;
+    }
+    
+    // Add negative prompt if entered
+    let negativePrompt = '';
+    if (paramSelect.value === 'negative' && negativeInput.value) {
+      negativePrompt = `&negative=${encodeURIComponent(negativeInput.value)}`;
+    }
+    
+    // Add steps if entered
+    let steps = '';
+    if (paramSelect.value === 'steps' && stepsInput.value) {
+      steps = `&steps=${stepsInput.value}`;
+    }
+    
+    // Add cfg scale if entered
+    let cfg = '';
+    if (paramSelect.value === 'cfg' && cfgInput.value) {
+      cfg = `&cfg_scale=${cfgInput.value}`;
+    }
+    
+    // Build the URL for the Pollinations API
+    let apiUrl = `https://image.pollinations.ai/prompt/${encodeURIComponent(fullPrompt)}?width=${width}&height=${height}${seed}${negativePrompt}${steps}${cfg}&nologo=true`;
+    
+    try {
+      // Fetch the image using superFetch to avoid CORS issues
+      let response = await superFetch(apiUrl);
+      let blob = await response.blob();
+      let imageUrl = URL.createObjectURL(blob);
+      
+      // Add watermark to the image
+      let img = new Image();
+      img.onload = () => {
+        let canvas = document.createElement('canvas');
+        canvas.width = img.width;
+        canvas.height = img.height;
+        let ctx = canvas.getContext('2d');
         
-        // Settings with localStorage
-        const getSavedSettings = () => {
-            return {
-                prompt: localStorage.getItem('telekboyo_prompt') || '',
-                negativePrompt: localStorage.getItem('telekboyo_negativePrompt') || '',
-                ratio: localStorage.getItem('telekboyo_ratio') || '1:1',
-                style: localStorage.getItem('telekboyo_style') || 'realistic',
-                seed: localStorage.getItem('telekboyo_seed') || '',
-                steps: localStorage.getItem('telekboyo_steps') || '30',
-                cfgScale: localStorage.getItem('telekboyo_cfgScale') || '7.5'
-            };
+        // Draw the original image
+        ctx.drawImage(img, 0, 0);
+        
+        // Add watermark
+        ctx.font = `${Math.max(16, img.width * 0.03)}px Inter`;
+        ctx.fillStyle = 'rgba(255, 255, 255, 0.7)';
+        ctx.fillText('Tboyo', 20, img.height - 20);
+        
+        // Display and setup download
+        resultImg.src = canvas.toDataURL(`image/${formatSelect.value}`);
+        resultCtn.style.display = 'block';
+        loadingCtn.style.display = 'none';
+        
+        // Setup download button
+        downloadBtn.onclick = () => {
+          let link = document.createElement('a');
+          link.download = `tboyo-image-${Date.now()}.${formatSelect.value}`;
+          link.href = canvas.toDataURL(`image/${formatSelect.value}`);
+          link.click();
         };
-
-        // Initialize with saved settings
-        document.addEventListener('DOMContentLoaded', () => {
-            const settings = getSavedSettings();
-            promptInput.value = settings.prompt;
-            negativePromptInput.value = settings.negativePrompt;
-            seedInput.value = settings.seed;
-            stepsInput.value = settings.steps;
-            cfgScaleInput.value = settings.cfgScale;
-            
-            // Activate saved ratio/style buttons
-            document.querySelector(`.ratio-btn[data-ratio="${settings.ratio}"]`).classList.add('active');
-            document.querySelector(`.style-btn[data-style="${settings.style}"]`).classList.add('active');
-            currentRatio = settings.ratio;
-            currentStyle = settings.style;
-            updateImageRatio();
-        });
-
-        // Save settings on change
-        promptInput.addEventListener('input', () => localStorage.setItem('telekboyo_prompt', promptInput.value));
-        negativePromptInput.addEventListener('input', () => localStorage.setItem('telekboyo_negativePrompt', negativePromptInput.value));
-        seedInput.addEventListener('input', () => localStorage.setItem('telekboyo_seed', seedInput.value));
-        
-        // Enhanced generate function
-        async function generateImage() {
-            const prompt = promptInput.value.trim();
-            if (!prompt) {
-                showError("Prompt cannot be empty!");
-                return;
-            }
-            
-            // Save current settings
-            localStorage.setItem('telekboyo_ratio', currentRatio);
-            localStorage.setItem('telekboyo_style', currentStyle);
-            
-            // Show loading
-            generateBtn.disabled = true;
-            loadingIndicator.style.display = 'flex';
-            hideError();
-            
-            try {
-                const dimensions = ratioDimensions[currentRatio];
-                const stylePrompt = stylePrompts[currentStyle] || '';
-                const fullPrompt = `${prompt}${stylePrompt ? `, ${stylePrompt}` : ''}`;
-                
-                // API URL with fallback
-                const apiUrl = new URL(`https://image.pollinations.ai/prompt/${encodeURIComponent(fullPrompt)}`);
-                apiUrl.searchParams.append('width', dimensions.width);
-                apiUrl.searchParams.append('height', dimensions.height);
-                apiUrl.searchParams.append('nologo', 'true');
-                
-                // Timeout handling
-                const controller = new AbortController();
-                const timeoutId = setTimeout(() => controller.abort(), 30000);
-                
-                // Fetch with error handling
-                const response = await fetch(apiUrl, { signal: controller.signal });
-                clearTimeout(timeoutId);
-                
-                if (!response.ok) throw new Error(`API Error: ${response.status}`);
-                
-                // Display image
-                generatedImage.src = apiUrl.toString();
-                generatedImage.onload = () => {
-                    generatedImage.style.display = 'block';
-                    downloadBtn.style.display = 'flex';
-                    loadingIndicator.style.display = 'none';
-                    generateBtn.disabled = false;
-                };
-                
-                generatedImage.onerror = () => {
-                    throw new Error("Failed to load image");
-                };
-                
-            } catch (error) {
-                console.error("Generation failed:", error);
-                showError(`Error: ${error.message}. Try again with different prompt.`);
-                loadingIndicator.style.display = 'none';
-                generateBtn.disabled = false;
-            }
-        }
-
-        // New helper functions
-        function showError(msg) {
-            errorMessage.textContent = msg;
-            errorMessage.style.display = 'block';
-        }
-        
-        function hideError() {
-            errorMessage.style.display = 'none';
-        }
-
-        // [KEEP YOUR OTHER FUNCTIONS LIKE downloadImage()]
-    </script>
-</body>
-</html>
+      };
+      
+      img.src = imageUrl;
+    } catch (error) {
+      console.error('Error generating image:', error);
+      alert('Error generating image. Please try again.');
+      loadingCtn.style.display = 'none';
+    }
+  };
+          </script>
+    
