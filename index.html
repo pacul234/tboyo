@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!-- [KEEP ALL YOUR EXISTING CSS] -->
+    <style>
+        /* [PASTE ALL YOUR ORIGINAL CSS HERE] */
+        
+        /* NEW: Error message style */
+        .error-message {
+            color: #ff4d4f;
+            background: #fff2f0;
+            padding: 0.75rem;
+            border-radius: 8px;
+            margin-top: 1rem;
+            display: none;
+            font-size: 0.9rem;
+            border: 1px solid #ffccc7;
+        }
+    </style>
+</head>
+<body>
+    <!-- [KEEP ALL YOUR EXISTING HTML] -->
+    <!-- ADD THIS AFTER LOADING DIV -->
+    <div class="error-message" id="error-message"></div>
+
+    <script>
+        // ====== IMPROVED VERSION ====== //
+        // DOM Elements
+        const errorMessage = document.getElementById('error-message');
+        
+        // Settings with localStorage
+        const getSavedSettings = () => {
+            return {
+                prompt: localStorage.getItem('telekboyo_prompt') || '',
+                negativePrompt: localStorage.getItem('telekboyo_negativePrompt') || '',
+                ratio: localStorage.getItem('telekboyo_ratio') || '1:1',
+                style: localStorage.getItem('telekboyo_style') || 'realistic',
+                seed: localStorage.getItem('telekboyo_seed') || '',
+                steps: localStorage.getItem('telekboyo_steps') || '30',
+                cfgScale: localStorage.getItem('telekboyo_cfgScale') || '7.5'
+            };
+        };
+
+        // Initialize with saved settings
+        document.addEventListener('DOMContentLoaded', () => {
+            const settings = getSavedSettings();
+            promptInput.value = settings.prompt;
+            negativePromptInput.value = settings.negativePrompt;
+            seedInput.value = settings.seed;
+            stepsInput.value = settings.steps;
+            cfgScaleInput.value = settings.cfgScale;
+            
+            // Activate saved ratio/style buttons
+            document.querySelector(`.ratio-btn[data-ratio="${settings.ratio}"]`).classList.add('active');
+            document.querySelector(`.style-btn[data-style="${settings.style}"]`).classList.add('active');
+            currentRatio = settings.ratio;
+            currentStyle = settings.style;
+            updateImageRatio();
+        });
+
+        // Save settings on change
+        promptInput.addEventListener('input', () => localStorage.setItem('telekboyo_prompt', promptInput.value));
+        negativePromptInput.addEventListener('input', () => localStorage.setItem('telekboyo_negativePrompt', negativePromptInput.value));
+        seedInput.addEventListener('input', () => localStorage.setItem('telekboyo_seed', seedInput.value));
+        
+        // Enhanced generate function
+        async function generateImage() {
+            const prompt = promptInput.value.trim();
+            if (!prompt) {
+                showError("Prompt cannot be empty!");
+                return;
+            }
+            
+            // Save current settings
+            localStorage.setItem('telekboyo_ratio', currentRatio);
+            localStorage.setItem('telekboyo_style', currentStyle);
+            
+            // Show loading
+            generateBtn.disabled = true;
+            loadingIndicator.style.display = 'flex';
+            hideError();
+            
+            try {
+                const dimensions = ratioDimensions[currentRatio];
+                const stylePrompt = stylePrompts[currentStyle] || '';
+                const fullPrompt = `${prompt}${stylePrompt ? `, ${stylePrompt}` : ''}`;
+                
+                // API URL with fallback
+                const apiUrl = new URL(`https://image.pollinations.ai/prompt/${encodeURIComponent(fullPrompt)}`);
+                apiUrl.searchParams.append('width', dimensions.width);
+                apiUrl.searchParams.append('height', dimensions.height);
+                apiUrl.searchParams.append('nologo', 'true');
+                
+                // Timeout handling
+                const controller = new AbortController();
+                const timeoutId = setTimeout(() => controller.abort(), 30000);
+                
+                // Fetch with error handling
+                const response = await fetch(apiUrl, { signal: controller.signal });
+                clearTimeout(timeoutId);
+                
+                if (!response.ok) throw new Error(`API Error: ${response.status}`);
+                
+                // Display image
+                generatedImage.src = apiUrl.toString();
+                generatedImage.onload = () => {
+                    generatedImage.style.display = 'block';
+                    downloadBtn.style.display = 'flex';
+                    loadingIndicator.style.display = 'none';
+                    generateBtn.disabled = false;
+                };
+                
+                generatedImage.onerror = () => {
+                    throw new Error("Failed to load image");
+                };
+                
+            } catch (error) {
+                console.error("Generation failed:", error);
+                showError(`Error: ${error.message}. Try again with different prompt.`);
+                loadingIndicator.style.display = 'none';
+                generateBtn.disabled = false;
+            }
+        }
+
+        // New helper functions
+        function showError(msg) {
+            errorMessage.textContent = msg;
+            errorMessage.style.display = 'block';
+        }
+        
+        function hideError() {
+            errorMessage.style.display = 'none';
+        }
+
+        // [KEEP YOUR OTHER FUNCTIONS LIKE downloadImage()]
+    </script>
+</body>
+</html>
