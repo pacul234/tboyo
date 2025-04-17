@@ -4,96 +4,101 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Telekboyo - AI Image Generator</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
-            --primary: #6e45e2;
-            --secondary: #88d3ce;
-            --dark: #2a2d3e;
-            --light: #f9f9f9;
-            --accent: #ff7e5f;
+            --primary: #6c5ce7;
+            --secondary: #a29bfe;
+            --dark: #2d3436;
+            --light: #f5f6fa;
+            --success: #00b894;
+            --danger: #d63031;
         }
-        
+
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: 'Poppins', sans-serif;
         }
-        
+
         body {
-            background-color: var(--light);
+            background-color: #f8f9fa;
             color: var(--dark);
-            min-height: 100vh;
+            line-height: 1.6;
         }
-        
+
         .container {
             max-width: 1200px;
             margin: 0 auto;
             padding: 2rem;
         }
-        
+
         header {
             text-align: center;
             margin-bottom: 2rem;
         }
-        
+
         h1 {
-            font-size: 3rem;
+            font-size: 2.5rem;
             color: var(--primary);
             margin-bottom: 0.5rem;
-            background: linear-gradient(45deg, var(--primary), var(--accent));
-            -webkit-background-clip: text;
-            background-clip: text;
-            color: transparent;
+            font-weight: 700;
         }
-        
+
         h2 {
             font-size: 1.2rem;
             color: var(--dark);
             font-weight: 400;
             margin-bottom: 2rem;
         }
-        
+
         .generator-container {
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 2rem;
         }
-        
-        .settings-panel {
+
+        @media (max-width: 768px) {
+            .generator-container {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .control-panel {
             background: white;
             border-radius: 12px;
             padding: 1.5rem;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
         }
-        
+
         .preview-panel {
             background: white;
             border-radius: 12px;
             padding: 1.5rem;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
             display: flex;
             flex-direction: column;
-            align-items: center;
-            justify-content: center;
         }
-        
+
         .form-group {
             margin-bottom: 1.5rem;
         }
-        
+
         label {
             display: block;
             margin-bottom: 0.5rem;
             font-weight: 500;
             color: var(--dark);
         }
-        
-        .prompt-input {
+
+        .input-group {
             position: relative;
         }
-        
-        input[type="text"], textarea, select {
+
+        input[type="text"], 
+        textarea, 
+        select {
             width: 100%;
             padding: 0.8rem 1rem;
             border: 1px solid #ddd;
@@ -101,13 +106,24 @@
             font-size: 1rem;
             transition: all 0.3s ease;
         }
-        
-        input[type="text"]:focus, textarea:focus, select:focus {
+
+        input[type="text"]:focus, 
+        textarea:focus, 
+        select:focus {
             outline: none;
             border-color: var(--primary);
-            box-shadow: 0 0 0 2px rgba(110, 69, 226, 0.2);
+            box-shadow: 0 0 0 3px rgba(108, 92, 231, 0.2);
         }
-        
+
+        textarea {
+            min-height: 120px;
+            resize: vertical;
+        }
+
+        .prompt-input {
+            position: relative;
+        }
+
         .clear-prompt {
             position: absolute;
             right: 10px;
@@ -115,254 +131,180 @@
             transform: translateY(-50%);
             background: none;
             border: none;
-            cursor: pointer;
             color: #999;
+            cursor: pointer;
             font-size: 1.2rem;
+            transition: color 0.2s;
         }
-        
+
         .clear-prompt:hover {
-            color: var(--accent);
+            color: var(--danger);
         }
-        
+
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            margin-bottom: 0.5rem;
+        }
+
+        .checkbox-group input {
+            margin-right: 0.5rem;
+        }
+
         .btn {
-            background: linear-gradient(45deg, var(--primary), var(--secondary));
+            display: inline-block;
+            padding: 0.8rem 1.5rem;
+            background-color: var(--primary);
             color: white;
             border: none;
-            padding: 0.8rem 1.5rem;
             border-radius: 8px;
             font-size: 1rem;
             font-weight: 500;
             cursor: pointer;
             transition: all 0.3s ease;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
+            text-align: center;
         }
-        
+
         .btn:hover {
+            background-color: #5649c0;
             transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(110, 69, 226, 0.3);
         }
-        
-        .btn:disabled {
-            background: #ddd;
-            cursor: not-allowed;
-            transform: none;
-            box-shadow: none;
-        }
-        
-        .advanced-options {
-            margin-top: 1rem;
-            padding: 1rem;
-            background: #f5f5f5;
-            border-radius: 8px;
-            display: none;
-        }
-        
-        .toggle-advanced {
-            background: none;
-            border: none;
-            color: var(--primary);
-            font-weight: 500;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            margin-bottom: 0.5rem;
-        }
-        
-        .toggle-advanced svg {
-            margin-left: 0.5rem;
-            transition: transform 0.3s ease;
-        }
-        
-        .toggle-advanced.active svg {
-            transform: rotate(180deg);
-        }
-        
-        .image-preview {
+
+        .btn-block {
+            display: block;
             width: 100%;
-            max-width: 512px;
-            height: auto;
-            border-radius: 8px;
-            background: #f5f5f5;
+        }
+
+        .btn-secondary {
+            background-color: var(--secondary);
+        }
+
+        .btn-secondary:hover {
+            background-color: #8c7ae6;
+        }
+
+        .image-preview {
+            flex-grow: 1;
             display: flex;
             align-items: center;
             justify-content: center;
-            aspect-ratio: 1/1;
+            background-color: #f1f3f5;
+            border-radius: 8px;
+            margin-bottom: 1.5rem;
             overflow: hidden;
             position: relative;
         }
-        
+
         .image-preview img {
             max-width: 100%;
             max-height: 100%;
             object-fit: contain;
         }
-        
-        .watermark {
-            position: absolute;
-            bottom: 10px;
-            right: 10px;
-            background: rgba(0,0,0,0.5);
-            color: white;
-            padding: 0.2rem 0.5rem;
-            border-radius: 4px;
-            font-size: 0.8rem;
-            display: none;
-        }
-        
+
         .loading-animation {
             display: none;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        .spinner {
             width: 50px;
             height: 50px;
-            border: 5px solid rgba(110, 69, 226, 0.2);
+            border: 5px solid rgba(108, 92, 231, 0.2);
             border-radius: 50%;
             border-top-color: var(--primary);
             animation: spin 1s ease-in-out infinite;
         }
-        
+
         @keyframes spin {
             to { transform: rotate(360deg); }
         }
-        
-        .result-actions {
-            margin-top: 1.5rem;
-            display: none;
-            gap: 1rem;
-            justify-content: center;
-        }
-        
-        .ratio-buttons {
-            display: flex;
-            gap: 0.5rem;
-            margin-bottom: 1rem;
-        }
-        
-        .ratio-btn {
-            padding: 0.5rem 1rem;
-            background: #f0f0f0;
-            border: none;
-            border-radius: 6px;
-            cursor: pointer;
-            transition: all 0.2s ease;
-        }
-        
-        .ratio-btn.active {
-            background: var(--primary);
+
+        .watermark {
+            position: absolute;
+            bottom: 10px;
+            right: 10px;
+            background-color: rgba(0, 0, 0, 0.5);
             color: white;
+            padding: 5px 10px;
+            border-radius: 4px;
+            font-size: 0.8rem;
         }
-        
-        .style-options {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
-            gap: 0.5rem;
-            margin-bottom: 1rem;
+
+        .advanced-options {
+            margin-top: 1rem;
+            padding: 1rem;
+            background-color: #f8f9fa;
+            border-radius: 8px;
+            border: 1px solid #eee;
         }
-        
-        .style-option {
-            border: 1px solid #ddd;
-            border-radius: 6px;
-            padding: 0.5rem;
-            text-align: center;
-            cursor: pointer;
-            transition: all 0.2s ease;
-        }
-        
-        .style-option:hover {
-            border-color: var(--primary);
-        }
-        
-        .style-option.active {
-            border-color: var(--primary);
-            background: rgba(110, 69, 226, 0.1);
-        }
-        
-        .format-options {
-            display: flex;
-            gap: 0.5rem;
-            margin-bottom: 1rem;
-        }
-        
-        .format-option {
-            padding: 0.5rem 1rem;
-            background: #f0f0f0;
-            border: none;
-            border-radius: 6px;
-            cursor: pointer;
-            transition: all 0.2s ease;
-        }
-        
-        .format-option.active {
-            background: var(--primary);
-            color: white;
-        }
-        
-        .enhanced-toggle {
+
+        .toggle-advanced {
             display: flex;
             align-items: center;
-            gap: 0.5rem;
-            margin-bottom: 1rem;
-        }
-        
-        .toggle-switch {
-            position: relative;
-            display: inline-block;
-            width: 50px;
-            height: 24px;
-        }
-        
-        .toggle-switch input {
-            opacity: 0;
-            width: 0;
-            height: 0;
-        }
-        
-        .slider {
-            position: absolute;
+            justify-content: space-between;
             cursor: pointer;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background-color: #ccc;
-            transition: .4s;
-            border-radius: 24px;
+            padding: 0.5rem 0;
+            font-weight: 500;
+            color: var(--primary);
         }
-        
-        .slider:before {
-            position: absolute;
-            content: "";
-            height: 16px;
-            width: 16px;
-            left: 4px;
-            bottom: 4px;
-            background-color: white;
-            transition: .4s;
-            border-radius: 50%;
+
+        .toggle-advanced::after {
+            content: "+";
+            font-size: 1.2rem;
         }
-        
-        input:checked + .slider {
-            background-color: var(--primary);
+
+        .toggle-advanced.active::after {
+            content: "-";
         }
-        
-        input:checked + .slider:before {
-            transform: translateX(26px);
+
+        .hidden {
+            display: none;
         }
-        
-        .placeholder-text {
-            color: #999;
+
+        .download-options {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .style-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 0.5rem;
+            margin-top: 0.5rem;
+        }
+
+        .style-option {
+            padding: 0.5rem;
+            border: 1px solid #ddd;
+            border-radius: 6px;
             text-align: center;
-            padding: 2rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-size: 0.8rem;
         }
-        
-        @media (max-width: 768px) {
-            .generator-container {
-                grid-template-columns: 1fr;
-            }
-            
-            h1 {
-                font-size: 2rem;
-            }
+
+        .style-option:hover {
+            border-color: var(--primary);
+            background-color: rgba(108, 92, 231, 0.1);
+        }
+
+        .style-option.selected {
+            border-color: var(--primary);
+            background-color: rgba(108, 92, 231, 0.2);
+            font-weight: 500;
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 3rem;
+            padding-top: 2rem;
+            border-top: 1px solid #eee;
+            color: #666;
+            font-size: 0.9rem;
         }
     </style>
 </head>
@@ -372,214 +314,274 @@
             <h1>Telekboyo</h1>
             <h2>AI Image Generator</h2>
         </header>
-        
+
         <div class="generator-container">
-            <div class="settings-panel">
-                <div class="form-group prompt-input">
+            <div class="control-panel">
+                <div class="form-group">
                     <label for="prompt">Prompt</label>
-                    <input type="text" id="prompt" placeholder="Describe the image you want to generate...">
-                    <button class="clear-prompt" title="Clear prompt">×</button>
-                </div>
-                
-                <div class="form-group">
-                    <label>Image Style</label>
-                    <div class="style-options">
-                        <div class="style-option active" data-style="realistic">Realistic</div>
-                        <div class="style-option" data-style="anime">Anime</div>
-                        <div class="style-option" data-style="fantasy">Fantasy</div>
-                        <div class="style-option" data-style="cyberpunk">Cyberpunk</div>
-                        <div class="style-option" data-style="minimal">Minimal</div>
-                        <div class="style-option" data-style="3d-render">3D Render</div>
-                        <div class="style-option" data-style="watercolor">Watercolor</div>
-                        <div class="style-option" data-style="pixel-art">Pixel Art</div>
+                    <div class="prompt-input">
+                        <textarea id="prompt" placeholder="Describe the image you want to generate..."></textarea>
+                        <button class="clear-prompt" id="clear-prompt">×</button>
                     </div>
                 </div>
-                
+
                 <div class="form-group">
-                    <label>Image Ratio</label>
-                    <div class="ratio-buttons">
-                        <button class="ratio-btn active" data-ratio="1:1">1:1</button>
-                        <button class="ratio-btn" data-ratio="9:16">9:16</button>
-                        <button class="ratio-btn" data-ratio="16:9">16:9</button>
-                        <button class="ratio-btn" data-ratio="4:3">4:3</button>
-                        <button class="ratio-btn" data-ratio="3:2">3:2</button>
+                    <label>Style</label>
+                    <div class="style-grid" id="style-grid">
+                        <!-- Styles will be added by JavaScript -->
                     </div>
                 </div>
-                
-                <div class="form-group enhanced-toggle">
-                    <label>Enhanced Prompt</label>
-                    <label class="toggle-switch">
-                        <input type="checkbox" id="enhanced-toggle" checked>
-                        <span class="slider"></span>
-                    </label>
-                    <span id="enhanced-label">Yes</span>
-                </div>
-                
+
                 <div class="form-group">
-                    <label>Image Format</label>
-                    <div class="format-options">
-                        <button class="format-option active" data-format="png">PNG</button>
-                        <button class="format-option" data-format="jpg">JPG</button>
-                        <button class="format-option" data-format="webp">WebP</button>
-                    </div>
+                    <label for="ratio">Aspect Ratio</label>
+                    <select id="ratio">
+                        <option value="1:1">Square (1:1)</option>
+                        <option value="9:16">Portrait (9:16)</option>
+                        <option value="16:9">Landscape (16:9)</option>
+                        <option value="4:3">Standard (4:3)</option>
+                        <option value="3:4">Vertical (3:4)</option>
+                    </select>
                 </div>
-                
-                <button id="generate-btn" class="btn">
-                    Generate Image
-                </button>
-                
-                <button class="toggle-advanced" id="toggle-advanced">
-                    Advanced Options
-                    <svg width="12" height="8" viewBox="0 0 12 8" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M1 1L6 6L11 1" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-                    </svg>
-                </button>
-                
-                <div class="advanced-options" id="advanced-options">
+
+                <div class="checkbox-group">
+                    <input type="checkbox" id="enhanced-prompt" checked>
+                    <label for="enhanced-prompt">Enhanced Prompt (auto-improve your prompt)</label>
+                </div>
+
+                <div class="toggle-advanced" id="toggle-advanced">Advanced Options</div>
+                <div class="advanced-options hidden" id="advanced-options">
                     <div class="form-group">
                         <label for="negative-prompt">Negative Prompt</label>
-                        <textarea id="negative-prompt" rows="3" placeholder="What you don't want in the image..."></textarea>
+                        <textarea id="negative-prompt" placeholder="What you don't want in the image..."></textarea>
                     </div>
-                    
+
                     <div class="form-group">
-                        <label for="seed">Seed</label>
+                        <label for="seed">Seed (leave blank for random)</label>
                         <input type="text" id="seed" placeholder="Random">
                     </div>
-                    
+
                     <div class="form-group">
-                        <label for="steps">Steps</label>
-                        <input type="range" id="steps" min="10" max="100" value="50">
-                        <span id="steps-value">50</span>
+                        <label for="steps">Steps (20-50 recommended)</label>
+                        <input type="number" id="steps" min="10" max="100" value="30">
                     </div>
-                    
+
                     <div class="form-group">
-                        <label for="cfg-scale">CFG Scale</label>
-                        <input type="range" id="cfg-scale" min="1" max="20" value="7">
-                        <span id="cfg-scale-value">7</span>
+                        <label for="cfg-scale">CFG Scale (guidance scale, 7-12 recommended)</label>
+                        <input type="number" id="cfg-scale" min="1" max="20" step="0.5" value="7.5">
                     </div>
                 </div>
+
+                <button class="btn btn-block" id="generate-btn">Generate Image</button>
             </div>
-            
+
             <div class="preview-panel">
-                <div class="image-preview">
-                    <div class="loading-animation" id="loading-animation"></div>
-                    <div class="placeholder-text" id="placeholder-text">Your generated image will appear here</div>
+                <div class="image-preview" id="image-preview">
+                    <div class="loading-animation" id="loading-animation">
+                        <div class="spinner"></div>
+                    </div>
                     <img id="generated-image" style="display: none;">
-                    <div class="watermark" id="watermark">Tboyo</div>
+                    <div class="watermark" id="watermark" style="display: none;">Tboyo</div>
                 </div>
-                
-                <div class="result-actions" id="result-actions">
-                    <button id="download-btn" class="btn">Download</button>
-                    <button id="regenerate-btn" class="btn">Regenerate</button>
+
+                <div class="form-group">
+                    <label for="format">Download Format</label>
+                    <select id="format">
+                        <option value="png">PNG</option>
+                        <option value="jpg">JPG</option>
+                        <option value="webp">WebP</option>
+                    </select>
+                </div>
+
+                <div class="download-options">
+                    <button class="btn btn-secondary" id="download-btn" disabled>Download</button>
+                    <button class="btn" id="save-btn" disabled>Save to Gallery</button>
                 </div>
             </div>
         </div>
+
+        <footer>
+            <p>Telekboyo AI Image Generator &copy; 2023 | Powered by Pollinations.ai</p>
+        </footer>
     </div>
-    
+
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             // Elements
             const promptInput = document.getElementById('prompt');
-            const clearPromptBtn = document.querySelector('.clear-prompt');
+            const clearPromptBtn = document.getElementById('clear-prompt');
             const generateBtn = document.getElementById('generate-btn');
+            const downloadBtn = document.getElementById('download-btn');
+            const saveBtn = document.getElementById('save-btn');
+            const imagePreview = document.getElementById('image-preview');
+            const generatedImage = document.getElementById('generated-image');
+            const loadingAnimation = document.getElementById('loading-animation');
+            const watermark = document.getElementById('watermark');
             const toggleAdvanced = document.getElementById('toggle-advanced');
             const advancedOptions = document.getElementById('advanced-options');
-            const styleOptions = document.querySelectorAll('.style-option');
-            const ratioButtons = document.querySelectorAll('.ratio-btn');
-            const formatOptions = document.querySelectorAll('.format-option');
-            const imagePreview = document.querySelector('.image-preview');
-            const generatedImage = document.getElementById('generated-image');
-            const placeholderText = document.getElementById('placeholder-text');
-            const loadingAnimation = document.getElementById('loading-animation');
-            const resultActions = document.getElementById('result-actions');
-            const downloadBtn = document.getElementById('download-btn');
-            const regenerateBtn = document.getElementById('regenerate-btn');
-            const watermark = document.getElementById('watermark');
-            const stepsSlider = document.getElementById('steps');
-            const stepsValue = document.getElementById('steps-value');
-            const cfgScaleSlider = document.getElementById('cfg-scale');
-            const cfgScaleValue = document.getElementById('cfg-scale-value');
-            const enhancedToggle = document.getElementById('enhanced-toggle');
-            const enhancedLabel = document.getElementById('enhanced-label');
-            
-            // Current settings
-            let currentSettings = {
-                prompt: '',
-                style: 'realistic',
-                ratio: '1:1',
-                enhanced: true,
-                format: 'png',
-                negativePrompt: '',
-                seed: '',
-                steps: 50,
-                cfgScale: 7
-            };
-            
-            // Clear prompt
-            clearPromptBtn.addEventListener('click', function() {
-                promptInput.value = '';
-                promptInput.focus();
+            const styleGrid = document.getElementById('style-grid');
+            const formatSelect = document.getElementById('format');
+            const ratioSelect = document.getElementById('ratio');
+            const enhancedPromptCheckbox = document.getElementById('enhanced-prompt');
+
+            // Styles data
+            const styles = [
+                { name: 'Realistic', value: 'realistic' },
+                { name: 'Anime', value: 'anime' },
+                { name: 'Cyberpunk', value: 'cyberpunk' },
+                { name: 'Fantasy', value: 'fantasy' },
+                { name: 'Minimalist', value: 'minimalist' },
+                { name: 'Watercolor', value: 'watercolor' },
+                { name: 'Oil Painting', value: 'oil-painting' },
+                { name: 'Pixel Art', value: 'pixel-art' },
+                { name: '3D Render', value: '3d-render' },
+                { name: 'Steampunk', value: 'steampunk' },
+                { name: 'Surreal', value: 'surreal' },
+                { name: 'Comic Book', value: 'comic-book' }
+            ];
+
+            // Initialize style grid
+            styles.forEach(style => {
+                const styleOption = document.createElement('div');
+                styleOption.className = 'style-option';
+                styleOption.textContent = style.name;
+                styleOption.dataset.value = style.value;
+                styleOption.addEventListener('click', function() {
+                    document.querySelectorAll('.style-option').forEach(opt => {
+                        opt.classList.remove('selected');
+                    });
+                    this.classList.add('selected');
+                });
+                styleGrid.appendChild(styleOption);
             });
-            
+
+            // Select first style by default
+            if (styleGrid.firstChild) {
+                styleGrid.firstChild.classList.add('selected');
+            }
+
             // Toggle advanced options
             toggleAdvanced.addEventListener('click', function() {
                 this.classList.toggle('active');
-                advancedOptions.style.display = this.classList.contains('active') ? 'block' : 'none';
+                advancedOptions.classList.toggle('hidden');
             });
-            
-            // Enhanced prompt toggle
-            enhancedToggle.addEventListener('change', function() {
-                currentSettings.enhanced = this.checked;
-                enhancedLabel.textContent = this.checked ? 'Yes' : 'No';
+
+            // Clear prompt
+            clearPromptBtn.addEventListener('click', function() {
+                promptInput.value = '';
             });
-            
-            // Style selection
-            styleOptions.forEach(option => {
-                option.addEventListener('click', function() {
-                    styleOptions.forEach(opt => opt.classList.remove('active'));
-                    this.classList.add('active');
-                    currentSettings.style = this.dataset.style;
-                });
-            });
-            
-            // Ratio selection
-            ratioButtons.forEach(button => {
-                button.addEventListener('click', function() {
-                    ratioButtons.forEach(btn => btn.classList.remove('active'));
-                    this.classList.add('active');
-                    currentSettings.ratio = this.dataset.ratio;
-                    
-                    // Update preview aspect ratio
-                    const [w, h] = this.dataset.ratio.split(':');
-                    imagePreview.style.aspectRatio = `${w}/${h}`;
-                });
-            });
-            
-            // Format selection
-            formatOptions.forEach(option => {
-                option.addEventListener('click', function() {
-                    formatOptions.forEach(opt => opt.classList.remove('active'));
-                    this.classList.add('active');
-                    currentSettings.format = this.dataset.format;
-                });
-            });
-            
-            // Update slider values
-            stepsSlider.addEventListener('input', function() {
-                stepsValue.textContent = this.value;
-                currentSettings.steps = parseInt(this.value);
-            });
-            
-            cfgScaleSlider.addEventListener('input', function() {
-                cfgScaleValue.textContent = this.value;
-                currentSettings.cfgScale = parseInt(this.value);
-            });
-            
+
             // Generate image
-            generateBtn.addEventListener('click', generateImage);
-            regenerateBtn.addEventListener('click', generateImage);
-            
-            async function generateImage() {
-                currentSettings.prompt = promptInput.value.trim();
-                currentSettings.negativePrompt = document.getElementById('negative-prompt').value.trim();
-                currentSetting
+            generateBtn.addEventListener('click', async function() {
+                const prompt = promptInput.value.trim();
+                if (!prompt) {
+                    alert('Please enter a prompt');
+                    return;
+                }
+
+                const selectedStyle = document.querySelector('.style-option.selected');
+                const style = selectedStyle ? selectedStyle.dataset.value : 'realistic';
+                const ratio = ratioSelect.value;
+                const enhanced = enhancedPromptCheckbox.checked;
+                const negativePrompt = document.getElementById('negative-prompt').value;
+                const seed = document.getElementById('seed').value;
+                const steps = document.getElementById('steps').value;
+                const cfgScale = document.getElementById('cfg-scale').value;
+
+                // Show loading animation
+                generatedImage.style.display = 'none';
+                loadingAnimation.style.display = 'block';
+                generateBtn.disabled = true;
+                generateBtn.textContent = 'Generating...';
+
+                // Prepare parameters
+                const [width, height] = ratio.split(':').map(Number);
+                const aspectRatio = width / height;
+                let imgWidth = 512;
+                let imgHeight = Math.round(imgWidth / aspectRatio);
+
+                // Adjust for portrait orientation
+                if (aspectRatio < 1) {
+                    imgHeight = 512;
+                    imgWidth = Math.round(imgHeight * aspectRatio);
+                }
+
+                // Construct final prompt
+                let finalPrompt = prompt;
+                if (enhanced) {
+                    finalPrompt = `${prompt}, ${style} style, high quality, detailed, 4k`;
+                }
+
+                // API parameters
+                const params = {
+                    prompt: finalPrompt,
+                    width: imgWidth,
+                    height: imgHeight,
+                    nologo: true,
+                    steps: steps || 30,
+                    guidance_scale: cfgScale || 7.5
+                };
+
+                if (negativePrompt) {
+                    params.negative_prompt = negativePrompt;
+                }
+
+                if (seed) {
+                    params.seed = seed;
+                }
+
+                // Convert params to query string
+                const queryString = new URLSearchParams(params).toString();
+                const apiUrl = `https://image.pollinations.ai/prompt/${encodeURIComponent(finalPrompt)}?${queryString}`;
+
+                try {
+                    // Fetch image
+                    generatedImage.src = apiUrl;
+                    
+                    // Wait for image to load
+                    await new Promise((resolve, reject) => {
+                        generatedImage.onload = resolve;
+                        generatedImage.onerror = reject;
+                    });
+
+                    // Show image and watermark
+                    generatedImage.style.display = 'block';
+                    watermark.style.display = 'block';
+                    loadingAnimation.style.display = 'none';
+                    
+                    // Enable download buttons
+                    downloadBtn.disabled = false;
+                    saveBtn.disabled = false;
+                } catch (error) {
+                    console.error('Error generating image:', error);
+                    alert('Error generating image. Please try again.');
+                    loadingAnimation.style.display = 'none';
+                } finally {
+                    generateBtn.disabled = false;
+                    generateBtn.textContent = 'Generate Image';
+                }
+            });
+
+            // Download image
+            downloadBtn.addEventListener('click', function() {
+                if (!generatedImage.src) return;
+                
+                const format = formatSelect.value;
+                const link = document.createElement('a');
+                link.href = generatedImage.src;
+                link.download = `telekboyo-ai-image-${Date.now()}.${format}`;
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+            });
+
+            // Save to gallery (simulated - in a real app this would save to a database)
+            saveBtn.addEventListener('click', function() {
+                if (!generatedImage.src) return;
+                
+                // In a real implementation, you would save to a database or localStorage
+                alert('Image saved to your gallery (simulated in this demo)');
+            });
+        });
+    </script>
+</body>
+                             </html>
