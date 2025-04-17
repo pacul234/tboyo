@@ -156,6 +156,7 @@
             padding: 1rem;
             background: #f5f5f5;
             border-radius: 8px;
+            display: none;
         }
         
         .toggle-advanced {
@@ -207,6 +208,7 @@
             padding: 0.2rem 0.5rem;
             border-radius: 4px;
             font-size: 0.8rem;
+            display: none;
         }
         
         .loading-animation {
@@ -225,7 +227,7 @@
         
         .result-actions {
             margin-top: 1.5rem;
-            display: flex;
+            display: none;
             gap: 1rem;
             justify-content: center;
         }
@@ -347,6 +349,12 @@
             transform: translateX(26px);
         }
         
+        .placeholder-text {
+            color: #999;
+            text-align: center;
+            padding: 2rem;
+        }
+        
         @media (max-width: 768px) {
             .generator-container {
                 grid-template-columns: 1fr;
@@ -401,10 +409,10 @@
                 <div class="form-group enhanced-toggle">
                     <label>Enhanced Prompt</label>
                     <label class="toggle-switch">
-                        <input type="checkbox" checked>
+                        <input type="checkbox" id="enhanced-toggle" checked>
                         <span class="slider"></span>
                     </label>
-                    <span>Yes</span>
+                    <span id="enhanced-label">Yes</span>
                 </div>
                 
                 <div class="form-group">
@@ -420,14 +428,14 @@
                     Generate Image
                 </button>
                 
-                <button class="toggle-advanced">
+                <button class="toggle-advanced" id="toggle-advanced">
                     Advanced Options
                     <svg width="12" height="8" viewBox="0 0 12 8" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <path d="M1 1L6 6L11 1" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
                     </svg>
                 </button>
                 
-                <div class="advanced-options" style="display: none;">
+                <div class="advanced-options" id="advanced-options">
                     <div class="form-group">
                         <label for="negative-prompt">Negative Prompt</label>
                         <textarea id="negative-prompt" rows="3" placeholder="What you don't want in the image..."></textarea>
@@ -454,13 +462,13 @@
             
             <div class="preview-panel">
                 <div class="image-preview">
-                    <div class="loading-animation"></div>
-                    <div id="placeholder-text">Your generated image will appear here</div>
+                    <div class="loading-animation" id="loading-animation"></div>
+                    <div class="placeholder-text" id="placeholder-text">Your generated image will appear here</div>
                     <img id="generated-image" style="display: none;">
-                    <div class="watermark" style="display: none;">Tboyo</div>
+                    <div class="watermark" id="watermark">Tboyo</div>
                 </div>
                 
-                <div class="result-actions" style="display: none;">
+                <div class="result-actions" id="result-actions">
                     <button id="download-btn" class="btn">Download</button>
                     <button id="regenerate-btn" class="btn">Regenerate</button>
                 </div>
@@ -474,23 +482,25 @@
             const promptInput = document.getElementById('prompt');
             const clearPromptBtn = document.querySelector('.clear-prompt');
             const generateBtn = document.getElementById('generate-btn');
-            const toggleAdvanced = document.querySelector('.toggle-advanced');
-            const advancedOptions = document.querySelector('.advanced-options');
+            const toggleAdvanced = document.getElementById('toggle-advanced');
+            const advancedOptions = document.getElementById('advanced-options');
             const styleOptions = document.querySelectorAll('.style-option');
             const ratioButtons = document.querySelectorAll('.ratio-btn');
             const formatOptions = document.querySelectorAll('.format-option');
             const imagePreview = document.querySelector('.image-preview');
             const generatedImage = document.getElementById('generated-image');
             const placeholderText = document.getElementById('placeholder-text');
-            const loadingAnimation = document.querySelector('.loading-animation');
-            const resultActions = document.querySelector('.result-actions');
+            const loadingAnimation = document.getElementById('loading-animation');
+            const resultActions = document.getElementById('result-actions');
             const downloadBtn = document.getElementById('download-btn');
             const regenerateBtn = document.getElementById('regenerate-btn');
-            const watermark = document.querySelector('.watermark');
+            const watermark = document.getElementById('watermark');
             const stepsSlider = document.getElementById('steps');
             const stepsValue = document.getElementById('steps-value');
             const cfgScaleSlider = document.getElementById('cfg-scale');
             const cfgScaleValue = document.getElementById('cfg-scale-value');
+            const enhancedToggle = document.getElementById('enhanced-toggle');
+            const enhancedLabel = document.getElementById('enhanced-label');
             
             // Current settings
             let currentSettings = {
@@ -515,6 +525,12 @@
             toggleAdvanced.addEventListener('click', function() {
                 this.classList.toggle('active');
                 advancedOptions.style.display = this.classList.contains('active') ? 'block' : 'none';
+            });
+            
+            // Enhanced prompt toggle
+            enhancedToggle.addEventListener('change', function() {
+                currentSettings.enhanced = this.checked;
+                enhancedLabel.textContent = this.checked ? 'Yes' : 'No';
             });
             
             // Style selection
@@ -565,25 +581,5 @@
             
             async function generateImage() {
                 currentSettings.prompt = promptInput.value.trim();
-                
-                if (!currentSettings.prompt) {
-                    alert('Please enter a prompt');
-                    return;
-                }
-                
-                // Show loading state
-                generateBtn.disabled = true;
-                generateBtn.innerHTML = 'Generating...';
-                placeholderText.style.display = 'none';
-                loadingAnimation.style.display = 'block';
-                generatedImage.style.display = 'none';
-                resultActions.style.display = 'none';
-                
-                try {
-                    // Construct API URL for pollinations.ai
-                    const apiUrl = constructApiUrl();
-                    
-                    // Fetch image
-                    const response = await fetch(apiUrl);
-                    
-        
+                currentSettings.negativePrompt = document.getElementById('negative-prompt').value.trim();
+                currentSetting
