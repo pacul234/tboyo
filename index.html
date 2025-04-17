@@ -3,202 +3,310 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Telekboyo | AI Image Generator</title>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <title>Telekboyo - AI Image Generator</title>
     <style>
         :root {
-            --primary: #8A2BE2;
-            --secondary: #00BFFF;
-            --dark: #1A1A2E;
-            --light: #F8F9FF;
-            --accent: #FF6B6B;
-            --card-bg: rgba(255, 255, 255, 0.9);
-            --shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            --primary: #6e45e2;
+            --secondary: #88d3ce;
+            --dark: #2a2d3e;
+            --light: #f9f9f9;
+            --accent: #ff7e5f;
         }
         
         * {
-            box-sizing: border-box;
             margin: 0;
             padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
         
         body {
-            font-family: 'Poppins', sans-serif;
-            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            background-color: var(--light);
             color: var(--dark);
             min-height: 100vh;
-            line-height: 1.6;
-            padding: 20px;
         }
         
         .container {
             max-width: 1200px;
             margin: 0 auto;
-            padding: 20px;
+            padding: 2rem;
         }
         
         header {
             text-align: center;
-            margin-bottom: 30px;
-            animation: fadeIn 0.8s ease-out;
-        }
-        
-        .logo {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 15px;
-            margin-bottom: 10px;
-        }
-        
-        .logo-icon {
-            font-size: 2.5rem;
-            background: linear-gradient(45deg, var(--primary), var(--secondary));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
+            margin-bottom: 2rem;
         }
         
         h1 {
-            font-size: 2.8rem;
-            margin: 0;
-            background: linear-gradient(45deg, var(--primary), var(--secondary));
+            font-size: 3rem;
+            color: var(--primary);
+            margin-bottom: 0.5rem;
+            background: linear-gradient(45deg, var(--primary), var(--accent));
             -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            font-weight: 700;
-            letter-spacing: -1px;
+            background-clip: text;
+            color: transparent;
         }
         
         h2 {
-            font-size: 1.3rem;
+            font-size: 1.2rem;
             color: var(--dark);
-            margin-top: 5px;
             font-weight: 400;
-            opacity: 0.8;
+            margin-bottom: 2rem;
         }
         
         .generator-container {
-            display: flex;
-            flex-direction: column;
-            gap: 30px;
-            background: var(--card-bg);
-            border-radius: 20px;
-            padding: 30px;
-            box-shadow: var(--shadow);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.3);
-            animation: slideUp 0.6s ease-out;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
         }
         
-        .input-section, .output-section {
-            display: flex;
-            flex-direction: column;
-            gap: 20px;
-        }
-        
-        .prompt-container {
-            position: relative;
-            width: 100%;
-        }
-        
-        #prompt-input {
-            width: 100%;
-            padding: 18px 60px 18px 20px;
-            border: none;
-            border-radius: 12px;
-            font-size: 1rem;
-            background: rgba(255, 255, 255, 0.8);
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
-            transition: all 0.3s;
-            font-family: 'Poppins', sans-serif;
-        }
-        
-        #prompt-input:focus {
-            outline: none;
-            box-shadow: 0 5px 20px rgba(138, 43, 226, 0.2);
+        .settings-panel {
             background: white;
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
         }
         
-        #prompt-input::placeholder {
-            color: #aaa;
+        .preview-panel {
+            background: white;
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            color: var(--dark);
+        }
+        
+        .prompt-input {
+            position: relative;
+        }
+        
+        input[type="text"], textarea, select {
+            width: 100%;
+            padding: 0.8rem 1rem;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+        
+        input[type="text"]:focus, textarea:focus, select:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 2px rgba(110, 69, 226, 0.2);
         }
         
         .clear-prompt {
             position: absolute;
-            right: 20px;
+            right: 10px;
             top: 50%;
             transform: translateY(-50%);
             background: none;
             border: none;
-            color: #aaa;
             cursor: pointer;
-            font-size: 1.3rem;
-            transition: all 0.2s;
+            color: #999;
+            font-size: 1.2rem;
         }
         
         .clear-prompt:hover {
             color: var(--accent);
-            transform: translateY(-50%) scale(1.1);
         }
         
-        .settings-panel {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-            gap: 20px;
-        }
-        
-        .setting-group {
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-        }
-        
-        label {
+        .btn {
+            background: linear-gradient(45deg, var(--primary), var(--secondary));
+            color: white;
+            border: none;
+            padding: 0.8rem 1.5rem;
+            border-radius: 8px;
+            font-size: 1rem;
             font-weight: 500;
-            color: var(--dark);
-            font-size: 0.95rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(110, 69, 226, 0.3);
+        }
+        
+        .btn:disabled {
+            background: #ddd;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+        
+        .advanced-options {
+            margin-top: 1rem;
+            padding: 1rem;
+            background: #f5f5f5;
+            border-radius: 8px;
+        }
+        
+        .toggle-advanced {
+            background: none;
+            border: none;
+            color: var(--primary);
+            font-weight: 500;
+            cursor: pointer;
             display: flex;
             align-items: center;
-            gap: 8px;
+            margin-bottom: 0.5rem;
         }
         
-        label i {
-            color: var(--primary);
-            font-size: 0.9rem;
+        .toggle-advanced svg {
+            margin-left: 0.5rem;
+            transition: transform 0.3s ease;
         }
         
-        select, input[type="number"], input[type="text"] {
-            padding: 12px 15px;
+        .toggle-advanced.active svg {
+            transform: rotate(180deg);
+        }
+        
+        .image-preview {
+            width: 100%;
+            max-width: 512px;
+            height: auto;
+            border-radius: 8px;
+            background: #f5f5f5;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            aspect-ratio: 1/1;
+            overflow: hidden;
+            position: relative;
+        }
+        
+        .image-preview img {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+        }
+        
+        .watermark {
+            position: absolute;
+            bottom: 10px;
+            right: 10px;
+            background: rgba(0,0,0,0.5);
+            color: white;
+            padding: 0.2rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.8rem;
+        }
+        
+        .loading-animation {
+            display: none;
+            width: 50px;
+            height: 50px;
+            border: 5px solid rgba(110, 69, 226, 0.2);
+            border-radius: 50%;
+            border-top-color: var(--primary);
+            animation: spin 1s ease-in-out infinite;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
+        .result-actions {
+            margin-top: 1.5rem;
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+        }
+        
+        .ratio-buttons {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+        
+        .ratio-btn {
+            padding: 0.5rem 1rem;
+            background: #f0f0f0;
             border: none;
-            border-radius: 10px;
-            font-size: 0.95rem;
-            background: rgba(255, 255, 255, 0.8);
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
-            font-family: 'Poppins', sans-serif;
-            transition: all 0.3s;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s ease;
         }
         
-        select:focus, input[type="number"]:focus, input[type="text"]:focus {
-            outline: none;
-            box-shadow: 0 5px 20px rgba(138, 43, 226, 0.2);
-            background: white;
+        .ratio-btn.active {
+            background: var(--primary);
+            color: white;
+        }
+        
+        .style-options {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+        
+        .style-option {
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            padding: 0.5rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        
+        .style-option:hover {
+            border-color: var(--primary);
+        }
+        
+        .style-option.active {
+            border-color: var(--primary);
+            background: rgba(110, 69, 226, 0.1);
+        }
+        
+        .format-options {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+        
+        .format-option {
+            padding: 0.5rem 1rem;
+            background: #f0f0f0;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        
+        .format-option.active {
+            background: var(--primary);
+            color: white;
         }
         
         .enhanced-toggle {
             display: flex;
             align-items: center;
-            justify-content: space-between;
-            background: rgba(255, 255, 255, 0.8);
-            padding: 12px 15px;
-            border-radius: 10px;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            gap: 0.5rem;
+            margin-bottom: 1rem;
         }
         
         .toggle-switch {
             position: relative;
             display: inline-block;
             width: 50px;
-            height: 26px;
+            height: 24px;
         }
         
         .toggle-switch input {
@@ -216,14 +324,14 @@
             bottom: 0;
             background-color: #ccc;
             transition: .4s;
-            border-radius: 34px;
+            border-radius: 24px;
         }
         
         .slider:before {
             position: absolute;
             content: "";
-            height: 18px;
-            width: 18px;
+            height: 16px;
+            width: 16px;
             left: 4px;
             bottom: 4px;
             background-color: white;
@@ -232,232 +340,20 @@
         }
         
         input:checked + .slider {
-            background: linear-gradient(45deg, var(--primary), var(--secondary));
+            background-color: var(--primary);
         }
         
         input:checked + .slider:before {
-            transform: translateX(24px);
+            transform: translateX(26px);
         }
         
-        .action-buttons {
-            display: flex;
-            gap: 15px;
-            margin-top: 10px;
-        }
-        
-        button {
-            padding: 15px 25px;
-            border: none;
-            border-radius: 12px;
-            font-size: 1rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-            flex: 1;
-        }
-        
-        .generate-btn {
-            background: linear-gradient(45deg, var(--primary), var(--secondary));
-            color: white;
-            box-shadow: 0 5px 20px rgba(138, 43, 226, 0.3);
-        }
-        
-        .generate-btn:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 8px 25px rgba(138, 43, 226, 0.4);
-        }
-        
-        .generate-btn:active {
-            transform: translateY(0);
-        }
-        
-        .download-btn {
-            background-color: var(--dark);
-            color: white;
-            box-shadow: 0 5px 20px rgba(26, 26, 46, 0.2);
-        }
-        
-        .download-btn:hover {
-            background-color: #252547;
-            transform: translateY(-3px);
-            box-shadow: 0 8px 25px rgba(26, 26, 46, 0.3);
-        }
-        
-        .download-btn:active {
-            transform: translateY(0);
-        }
-        
-        .output-image {
-            border-radius: 15px;
-            overflow: hidden;
-            background: linear-gradient(135deg, #f5f7fa 0%, #dfe3ee 100%);
-            min-height: 350px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            position: relative;
-            box-shadow: var(--shadow);
-            border: 1px solid rgba(255, 255, 255, 0.3);
-        }
-        
-        #generated-image {
-            max-width: 100%;
-            max-height: 70vh;
-            display: none;
-            border-radius: 10px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-        }
-        
-        .placeholder {
-            text-align: center;
-            color: #aaa;
-            padding: 40px;
-        }
-        
-        .placeholder i {
-            font-size: 3rem;
-            margin-bottom: 15px;
-            color: var(--primary);
-            opacity: 0.5;
-        }
-        
-        .placeholder p {
-            font-size: 1.1rem;
-            margin-top: 10px;
-        }
-        
-        .loading-animation {
-            display: none;
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(255, 255, 255, 0.9);
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            gap: 20px;
-            border-radius: 15px;
-            z-index: 10;
-        }
-        
-        .spinner {
-            width: 60px;
-            height: 60px;
-            border: 5px solid rgba(138, 43, 226, 0.1);
-            border-radius: 50%;
-            border-top-color: var(--primary);
-            animation: spin 1s linear infinite;
-        }
-        
-        @keyframes spin {
-            to { transform: rotate(360deg); }
-        }
-        
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
-        }
-        
-        @keyframes slideUp {
-            from { 
-                opacity: 0;
-                transform: translateY(20px);
-            }
-            to { 
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-        
-        .loading-text {
-            font-weight: 500;
-            color: var(--dark);
-            font-size: 1.1rem;
-        }
-        
-        .watermark {
-            position: absolute;
-            bottom: 15px;
-            right: 15px;
-            color: rgba(255, 255, 255, 0.9);
-            font-size: 0.9rem;
-            background: rgba(0, 0, 0, 0.6);
-            padding: 5px 12px;
-            border-radius: 20px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            backdrop-filter: blur(5px);
-        }
-        
-        .watermark i {
-            font-size: 0.8rem;
-        }
-        
-        .error-message {
-            color: #ff4757;
-            text-align: center;
-            margin-top: 15px;
-            padding: 12px;
-            background: rgba(255, 71, 87, 0.1);
-            border-radius: 10px;
-            display: none;
-            animation: shake 0.5s;
-        }
-        
-        @keyframes shake {
-            0%, 100% { transform: translateX(0); }
-            20%, 60% { transform: translateX(-5px); }
-            40%, 80% { transform: translateX(5px); }
-        }
-        
-        .style-tag {
-            position: absolute;
-            top: 15px;
-            left: 15px;
-            background: rgba(0, 0, 0, 0.6);
-            color: white;
-            padding: 5px 12px;
-            border-radius: 20px;
-            font-size: 0.8rem;
-            display: none;
-            backdrop-filter: blur(5px);
-        }
-        
-        /* Responsive adjustments */
         @media (max-width: 768px) {
-            .container {
-                padding: 15px;
-            }
-            
-            h1 {
-                font-size: 2.2rem;
-            }
-            
-            h2 {
-                font-size: 1.1rem;
-            }
-            
             .generator-container {
-                padding: 20px;
-            }
-            
-            .settings-panel {
                 grid-template-columns: 1fr;
             }
             
-            .action-buttons {
-                flex-direction: column;
-            }
-            
-            button {
-                width: 100%;
+            h1 {
+                font-size: 2rem;
             }
         }
     </style>
@@ -465,125 +361,149 @@
 <body>
     <div class="container">
         <header>
-            <div class="logo">
-                <i class="fas fa-magic logo-icon"></i>
-                <h1>Telekboyo</h1>
-            </div>
+            <h1>Telekboyo</h1>
             <h2>AI Image Generator</h2>
         </header>
         
         <div class="generator-container">
-            <div class="input-section">
-                <div class="prompt-container">
-                    <input type="text" id="prompt-input" placeholder="Describe the image you want to generate...">
-                    <button class="clear-prompt" title="Clear prompt"><i class="fas fa-times"></i></button>
+            <div class="settings-panel">
+                <div class="form-group prompt-input">
+                    <label for="prompt">Prompt</label>
+                    <input type="text" id="prompt" placeholder="Describe the image you want to generate...">
+                    <button class="clear-prompt" title="Clear prompt">×</button>
                 </div>
                 
-                <div class="settings-panel">
-                    <div class="setting-group">
-                        <label for="aspect-ratio"><i class="fas fa-crop-alt"></i>Aspect Ratio</label>
-                        <select id="aspect-ratio">
-                            <option value="512">Square (1:1)</option>
-                            <option value="512x768">Portrait (2:3)</option>
-                            <option value="768x512">Landscape (3:2)</option>
-                            <option value="512x896">Tall (9:16)</option>
-                            <option value="896x512">Wide (16:9)</option>
-                        </select>
-                    </div>
-                    
-                    <div class="setting-group">
-                        <label for="style"><i class="fas fa-paint-brush"></i>Style</label>
-                        <select id="style">
-                            <option value="">Default</option>
-                            <option value="digital art">Digital Art</option>
-                            <option value="photographic">Photographic</option>
-                            <option value="anime">Anime</option>
-                            <option value="fantasy art">Fantasy Art</option>
-                            <option value="neonpunk">Neonpunk</option>
-                            <option value="isometric">Isometric</option>
-                            <option value="3d render">3D Render</option>
-                            <option value="watercolor">Watercolor</option>
-                        </select>
-                    </div>
-                    
-                    <div class="setting-group">
-                        <label for="steps"><i class="fas fa-tachometer-alt"></i>Steps</label>
-                        <input type="number" id="steps" min="20" max="100" value="30">
-                    </div>
-                    
-                    <div class="setting-group">
-                        <label for="seed"><i class="fas fa-fingerprint"></i>Seed</label>
-                        <input type="number" id="seed" min="0" max="999999999" placeholder="Random">
-                    </div>
-                    
-                    <div class="setting-group">
-                        <label for="format"><i class="fas fa-file-image"></i>Format</label>
-                        <select id="format">
-                            <option value="png">PNG</option>
-                            <option value="jpg">JPG</option>
-                        </select>
-                    </div>
-                    
-                    <div class="enhanced-toggle">
-                        <label for="enhanced"><i class="fas fa-magic"></i>Enhanced Prompt</label>
-                        <label class="toggle-switch">
-                            <input type="checkbox" id="enhanced" checked>
-                            <span class="slider"></span>
-                        </label>
+                <div class="form-group">
+                    <label>Image Style</label>
+                    <div class="style-options">
+                        <div class="style-option active" data-style="realistic">Realistic</div>
+                        <div class="style-option" data-style="anime">Anime</div>
+                        <div class="style-option" data-style="fantasy">Fantasy</div>
+                        <div class="style-option" data-style="cyberpunk">Cyberpunk</div>
+                        <div class="style-option" data-style="minimal">Minimal</div>
+                        <div class="style-option" data-style="3d-render">3D Render</div>
+                        <div class="style-option" data-style="watercolor">Watercolor</div>
+                        <div class="style-option" data-style="pixel-art">Pixel Art</div>
                     </div>
                 </div>
                 
-                <div class="setting-group">
-                    <label for="negative-prompt"><i class="fas fa-ban"></i>Negative Prompt</label>
-                    <input type="text" id="negative-prompt" placeholder="What you don't want in the image...">
+                <div class="form-group">
+                    <label>Image Ratio</label>
+                    <div class="ratio-buttons">
+                        <button class="ratio-btn active" data-ratio="1:1">1:1</button>
+                        <button class="ratio-btn" data-ratio="9:16">9:16</button>
+                        <button class="ratio-btn" data-ratio="16:9">16:9</button>
+                        <button class="ratio-btn" data-ratio="4:3">4:3</button>
+                        <button class="ratio-btn" data-ratio="3:2">3:2</button>
+                    </div>
                 </div>
                 
-                <div class="action-buttons">
-                    <button class="generate-btn" id="generate-btn">
-                        <i class="fas fa-bolt"></i> Generate
-                    </button>
-                    <button class="download-btn" id="download-btn" disabled>
-                        <i class="fas fa-download"></i> Download
-                    </button>
+                <div class="form-group enhanced-toggle">
+                    <label>Enhanced Prompt</label>
+                    <label class="toggle-switch">
+                        <input type="checkbox" checked>
+                        <span class="slider"></span>
+                    </label>
+                    <span>Yes</span>
                 </div>
                 
-                <div class="error-message" id="error-message"></div>
+                <div class="form-group">
+                    <label>Image Format</label>
+                    <div class="format-options">
+                        <button class="format-option active" data-format="png">PNG</button>
+                        <button class="format-option" data-format="jpg">JPG</button>
+                        <button class="format-option" data-format="webp">WebP</button>
+                    </div>
+                </div>
+                
+                <button id="generate-btn" class="btn">
+                    Generate Image
+                </button>
+                
+                <button class="toggle-advanced">
+                    Advanced Options
+                    <svg width="12" height="8" viewBox="0 0 12 8" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M1 1L6 6L11 1" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                    </svg>
+                </button>
+                
+                <div class="advanced-options" style="display: none;">
+                    <div class="form-group">
+                        <label for="negative-prompt">Negative Prompt</label>
+                        <textarea id="negative-prompt" rows="3" placeholder="What you don't want in the image..."></textarea>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="seed">Seed</label>
+                        <input type="text" id="seed" placeholder="Random">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="steps">Steps</label>
+                        <input type="range" id="steps" min="10" max="100" value="50">
+                        <span id="steps-value">50</span>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="cfg-scale">CFG Scale</label>
+                        <input type="range" id="cfg-scale" min="1" max="20" value="7">
+                        <span id="cfg-scale-value">7</span>
+                    </div>
+                </div>
             </div>
             
-            <div class="output-section">
-                <div class="output-image">
-                    <div class="placeholder" id="placeholder">
-                        <i class="fas fa-image"></i>
-                        <p>Your AI-generated masterpiece will appear here</p>
-                    </div>
-                    <img id="generated-image" alt="Generated image">
-                    <div class="watermark" id="watermark">
-                        <i class="fas fa-water"></i> Tboyo
-                    </div>
-                    <div class="style-tag" id="style-tag"></div>
-                    
-                    <div class="loading-animation" id="loading-animation">
-                        <div class="spinner"></div>
-                        <p class="loading-text">Creating your artwork...</p>
-                    </div>
+            <div class="preview-panel">
+                <div class="image-preview">
+                    <div class="loading-animation"></div>
+                    <div id="placeholder-text">Your generated image will appear here</div>
+                    <img id="generated-image" style="display: none;">
+                    <div class="watermark" style="display: none;">Tboyo</div>
+                </div>
+                
+                <div class="result-actions" style="display: none;">
+                    <button id="download-btn" class="btn">Download</button>
+                    <button id="regenerate-btn" class="btn">Regenerate</button>
                 </div>
             </div>
         </div>
     </div>
-
+    
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             // Elements
-            const promptInput = document.getElementById('prompt-input');
+            const promptInput = document.getElementById('prompt');
             const clearPromptBtn = document.querySelector('.clear-prompt');
             const generateBtn = document.getElementById('generate-btn');
-            const downloadBtn = document.getElementById('download-btn');
+            const toggleAdvanced = document.querySelector('.toggle-advanced');
+            const advancedOptions = document.querySelector('.advanced-options');
+            const styleOptions = document.querySelectorAll('.style-option');
+            const ratioButtons = document.querySelectorAll('.ratio-btn');
+            const formatOptions = document.querySelectorAll('.format-option');
+            const imagePreview = document.querySelector('.image-preview');
             const generatedImage = document.getElementById('generated-image');
-            const loadingAnimation = document.getElementById('loading-animation');
-            const watermark = document.getElementById('watermark');
-            const placeholder = document.getElementById('placeholder');
-            const errorMessage = document.getElementById('error-message');
-            const styleTag = document.getElementById('style-tag');
+            const placeholderText = document.getElementById('placeholder-text');
+            const loadingAnimation = document.querySelector('.loading-animation');
+            const resultActions = document.querySelector('.result-actions');
+            const downloadBtn = document.getElementById('download-btn');
+            const regenerateBtn = document.getElementById('regenerate-btn');
+            const watermark = document.querySelector('.watermark');
+            const stepsSlider = document.getElementById('steps');
+            const stepsValue = document.getElementById('steps-value');
+            const cfgScaleSlider = document.getElementById('cfg-scale');
+            const cfgScaleValue = document.getElementById('cfg-scale-value');
+            
+            // Current settings
+            let currentSettings = {
+                prompt: '',
+                style: 'realistic',
+                ratio: '1:1',
+                enhanced: true,
+                format: 'png',
+                negativePrompt: '',
+                seed: '',
+                steps: 50,
+                cfgScale: 7
+            };
             
             // Clear prompt
             clearPromptBtn.addEventListener('click', function() {
@@ -591,25 +511,79 @@
                 promptInput.focus();
             });
             
+            // Toggle advanced options
+            toggleAdvanced.addEventListener('click', function() {
+                this.classList.toggle('active');
+                advancedOptions.style.display = this.classList.contains('active') ? 'block' : 'none';
+            });
+            
+            // Style selection
+            styleOptions.forEach(option => {
+                option.addEventListener('click', function() {
+                    styleOptions.forEach(opt => opt.classList.remove('active'));
+                    this.classList.add('active');
+                    currentSettings.style = this.dataset.style;
+                });
+            });
+            
+            // Ratio selection
+            ratioButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    ratioButtons.forEach(btn => btn.classList.remove('active'));
+                    this.classList.add('active');
+                    currentSettings.ratio = this.dataset.ratio;
+                    
+                    // Update preview aspect ratio
+                    const [w, h] = this.dataset.ratio.split(':');
+                    imagePreview.style.aspectRatio = `${w}/${h}`;
+                });
+            });
+            
+            // Format selection
+            formatOptions.forEach(option => {
+                option.addEventListener('click', function() {
+                    formatOptions.forEach(opt => opt.classList.remove('active'));
+                    this.classList.add('active');
+                    currentSettings.format = this.dataset.format;
+                });
+            });
+            
+            // Update slider values
+            stepsSlider.addEventListener('input', function() {
+                stepsValue.textContent = this.value;
+                currentSettings.steps = parseInt(this.value);
+            });
+            
+            cfgScaleSlider.addEventListener('input', function() {
+                cfgScaleValue.textContent = this.value;
+                currentSettings.cfgScale = parseInt(this.value);
+            });
+            
             // Generate image
-            generateBtn.addEventListener('click', async function() {
-                const prompt = promptInput.value.trim();
-                if (!prompt) {
-                    showError('Please enter a prompt description');
+            generateBtn.addEventListener('click', generateImage);
+            regenerateBtn.addEventListener('click', generateImage);
+            
+            async function generateImage() {
+                currentSettings.prompt = promptInput.value.trim();
+                
+                if (!currentSettings.prompt) {
+                    alert('Please enter a prompt');
                     return;
                 }
                 
-                // Show loading animation
-                loadingAnimation.style.display = 'flex';
+                // Show loading state
+                generateBtn.disabled = true;
+                generateBtn.innerHTML = 'Generating...';
+                placeholderText.style.display = 'none';
+                loadingAnimation.style.display = 'block';
                 generatedImage.style.display = 'none';
-                placeholder.style.display = 'none';
-                downloadBtn.disabled = true;
-                errorMessage.style.display = 'none';
-                watermark.style.display = 'none';
-                styleTag.style.display = 'none';
+                resultActions.style.display = 'none';
                 
                 try {
-                    // Get all parameters
-                    const aspectRatio = document.getElementById('aspect-ratio').value;
-                    const style = document.getElementById('style').value;
-                    const steps = document.getElementBy
+                    // Construct API URL for pollinations.ai
+                    const apiUrl = constructApiUrl();
+                    
+                    // Fetch image
+                    const response = await fetch(apiUrl);
+                    
+        
